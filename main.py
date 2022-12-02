@@ -9,7 +9,7 @@ def read_file(file_name):
     path = osp.join(INPUT_FOLDER, file_name)
     with open(path, "r") as f:
         lines = f.readlines()
-    lines = list(map(lambda x: x.strip(), lines))
+    lines = [x.strip() for x in lines]
 
     return lines
 
@@ -44,6 +44,29 @@ def day_01(task=1):
     return get_max_of_n(energy_list, n)
 
 
+def day_02(task):
+
+    def calc_round(code):
+        decode_map = {"A": 1,  # rock
+                      "B": 2,  # paper
+                      "C": 3,  # scissors
+                      "X": 1,  # rock
+                      "Y": 2,  # paper
+                      "Z": 3,  # scissors
+                      }
+        elfs_sign = decode_map[code[0].upper()]
+        my_sign = decode_map[code[2].upper()]
+
+        return my_sign + ((my_sign-elfs_sign + 1) % 3)*3
+
+    input_data = read_file("input_02.txt")
+    score = 0
+    for game in input_data:
+        score += calc_round(game)
+
+    return score
+
+
 def main(raw_args):
 
     print('Welcome to the Advent of Code in 2022')
@@ -55,6 +78,7 @@ def main(raw_args):
 
     day_map = {
         1: day_01,
+        2: day_02,
     }
 
     answer = day_map[args.day](args.task)
