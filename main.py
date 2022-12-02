@@ -47,21 +47,43 @@ def day_01(task=1):
 def day_02(task):
 
     def calc_round(code):
-        decode_map = {"A": 1,  # rock
-                      "B": 2,  # paper
-                      "C": 3,  # scissors
-                      "X": 1,  # rock
-                      "Y": 2,  # paper
-                      "Z": 3,  # scissors
+        decode_map = {"rock": 1,
+                      "paper": 2,
+                      "scissors": 3,
                       }
-        elfs_sign = decode_map[code[0].upper()]
-        my_sign = decode_map[code[2].upper()]
+        elfs_sign = decode_map[code[0]]
+        my_sign = decode_map[code[1]]
 
         return my_sign + ((my_sign-elfs_sign + 1) % 3)*3
 
+    def translate_data(data, task):
+        decode_map = {"A": "rock", "B": "paper", "C": "scissors",
+                      "X": "rock", "Y": "paper", "Z": "scissors"}
+        win_lose_table = {
+            # lose
+            "X": {"A": "C", "B": "A", "C": "B"},
+            # draw
+            "Y": {"A": "A", "B": "B", "C": "C"},
+            # win
+            "Z": {"A": "B", "B": "C", "C": "A"}
+            }
+
+        temp_result = []
+        if task == 2:
+            for elem in data:
+                temp_result.append((elem[0], " ", win_lose_table[elem[2]][elem[0]]))
+        else:
+            temp_result = data
+        result = []
+        for elem in temp_result:
+            result.append([decode_map[elem[0]], decode_map[elem[2]]])
+        return result
+
     input_data = read_file("input_02.txt")
     score = 0
-    for game in input_data:
+    translated_data = translate_data(data=input_data, task=task)
+
+    for game in translated_data:
         score += calc_round(game)
 
     return score
