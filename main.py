@@ -1,6 +1,7 @@
 import sys
 from os import path as osp
 import argparse
+import string
 
 INPUT_FOLDER = "input"
 
@@ -89,6 +90,32 @@ def day_02(task):
     return score
 
 
+def day_03(task):
+    alphabet = list(string.ascii_lowercase) + list(string.ascii_uppercase)
+
+    def get_priority(obj):
+        nonlocal alphabet
+        return alphabet.index(obj) + 1
+
+    input_data = read_file("input_03.txt")
+    backpacks = []
+    for line in input_data:
+        backpacks.append([line[:len(line)//2], line[len(line)//2:]])
+    common_objects = []
+    for bp in backpacks:
+        common_objects.append(list(set(bp[0]).intersection(set(bp[1])))[0])  # Yikes
+    priority_sum = 0
+    for obj in common_objects:
+        priority_sum += get_priority(obj)
+
+    return priority_sum
+
+
+
+def day_04(task):
+    pass
+
+
 def main(raw_args):
 
     print('Welcome to the Advent of Code in 2022')
@@ -101,6 +128,8 @@ def main(raw_args):
     day_map = {
         1: day_01,
         2: day_02,
+        3: day_03,
+        4: day_04
     }
 
     answer = day_map[args.day](args.task)
