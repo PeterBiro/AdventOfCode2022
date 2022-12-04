@@ -125,7 +125,30 @@ def day_03(task):
 
 
 def day_04(task):
-    pass
+
+    def parse_input(lines):
+        ret_val = []
+        for line in lines:
+            ivals = line.split(",")
+            i = []
+            for x in ivals:
+                i.append(convert_to(int, x.split("-")))
+            ret_val.append(i)
+        return ret_val
+
+    def is_intersect(a, b):
+        return (a[0] <= b[0] and b[1] <= a[1]) or (b[0] <= a[0] and a[1] <= b[1])
+
+    def count_intersections(intervals):
+        counter = 0
+        for pair in intervals:
+            if is_intersect(*pair):
+                counter += 1
+        return counter
+
+    input_data = read_file("input_04.txt")
+    interval_pairs = parse_input(input_data)
+    return count_intersections(interval_pairs)
 
 
 def main(raw_args):
