@@ -97,19 +97,31 @@ def day_03(task):
         nonlocal alphabet
         return alphabet.index(obj) + 1
 
+    def get_common(*args):
+        common = set(args[0])
+        for a in args:
+            common = common.intersection(set(a))
+        return list(common)[0]
+
     input_data = read_file("input_03.txt")
+
     backpacks = []
-    for line in input_data:
-        backpacks.append([line[:len(line)//2], line[len(line)//2:]])
+    if task == 1:
+        for line in input_data:
+            backpacks.append([line[:len(line)//2], line[len(line)//2:]])
+    else:
+        for i in range(0, len(input_data), 3):
+            backpacks.append([input_data[i], input_data[i+1], input_data[i+2]])
+
     common_objects = []
     for bp in backpacks:
-        common_objects.append(list(set(bp[0]).intersection(set(bp[1])))[0])  # Yikes
+        common_objects.append(get_common(*bp))
+
     priority_sum = 0
     for obj in common_objects:
         priority_sum += get_priority(obj)
 
     return priority_sum
-
 
 
 def day_04(task):
