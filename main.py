@@ -2,6 +2,7 @@ import sys
 from os import path as osp
 import argparse
 import string
+import re
 
 INPUT_FOLDER = "input"
 
@@ -128,22 +129,28 @@ def day_04(task):
 
     def parse_input(lines):
         ret_val = []
+        pattern = r"(\d*)-(\d*),(\d*)-(\d*)"
         for line in lines:
-            ivals = line.split(",")
-            i = []
-            for x in ivals:
-                i.append(convert_to(int, x.split("-")))
-            ret_val.append(i)
+            x = re.search(pattern, line)
+            ret_val.append([[int(x.group(1)), int(x.group(2))],
+                            [int(x.group(3)), int(x.group(4))]])
         return ret_val
 
-    def is_intersect(a, b):
+    def is_fully_intersect(a, b):
         return (a[0] <= b[0] and b[1] <= a[1]) or (b[0] <= a[0] and a[1] <= b[1])
+
+    def is_overlap(a, b):
+        return a[0] <= b[0] <= a[1] or b[0] <= a[0] <= b[1]
 
     def count_intersections(intervals):
         counter = 0
         for pair in intervals:
-            if is_intersect(*pair):
-                counter += 1
+            if task == 1:
+                if is_fully_intersect(*pair):
+                    counter += 1
+            else:
+                if is_overlap(*pair):
+                    counter += 1
         return counter
 
     input_data = read_file("input_04.txt")
