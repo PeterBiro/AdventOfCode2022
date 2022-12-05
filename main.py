@@ -3,6 +3,7 @@ from os import path as osp
 import argparse
 import string
 import re
+from collections import deque
 
 INPUT_FOLDER = "input"
 
@@ -158,6 +159,47 @@ def day_04(task):
     return count_intersections(interval_pairs)
 
 
+def day_05(task):
+
+    def parse_input(data_file):
+        is_header = True
+        moves = []
+        stacks = []
+        header = []
+        stack_nr_pattern = r"\s+(\d+)"
+        move_pattern = r"move (\d+) from (\d+) to (\d+)"
+        stack_nr = 0
+        for line in data_file:
+            if is_header:
+                m = re.match(stack_nr_pattern, line)
+                if m:
+                    stack_nr = int(m.group(1))
+                    is_header = False
+                else:
+                    header.append(line)
+            else:
+                m = re.match(move_pattern, line)
+                moves.append({"move": int(m.group(1)),
+                              "from": int(m.group(2)),
+                              "to":   int(m.group(3))
+                              })
+        for _ in range(stack_nr):
+            stacks.append(deque([]))
+        for line in header[::-1]:
+            for i, char in enumerate(line[1::3]):
+                if char != " ":
+                    stacks[i].append(char)
+
+        return stacks, moves
+
+
+
+
+    input_data = read_file("input_05.txt")
+    print(parse_input(input_data))
+    return 'IKNOW'
+
+
 def main(raw_args):
 
     print('Welcome to the Advent of Code in 2022')
@@ -171,7 +213,8 @@ def main(raw_args):
         1: day_01,
         2: day_02,
         3: day_03,
-        4: day_04
+        4: day_04,
+        5: day_05
     }
 
     answer = day_map[args.day](args.task)
