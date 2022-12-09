@@ -161,7 +161,7 @@ def day_04(task):
 
 def day_05(task):
 
-    class Stack(object):
+    class Stack:
         def __init__(self, reverse):
             self.stack = []
             self.reverse = reverse
@@ -226,6 +226,31 @@ def day_05(task):
     return result
 
 
+def day_06(task):
+    class Seeker:
+        def __init__(self):
+            self.mask = []
+            self.index = 0
+
+        def is_unique(self, new):
+            self.mask.append(new)
+            self.index += 1
+            if len(self.mask) == 5:
+                self.mask.pop(0)
+            return len(set(self.mask)) == 4
+
+        def show_mask(self):
+            return "".join(self.mask)
+
+    input_data = read_file("input_06.txt")
+    data = input_data[0]
+    seeker = Seeker()
+    for char in data:
+        if seeker.is_unique(char):
+            break
+    return seeker.index
+
+
 def main(raw_args):
 
     print('Welcome to the Advent of Code in 2022')
@@ -240,7 +265,8 @@ def main(raw_args):
         2: day_02,
         3: day_03,
         4: day_04,
-        5: day_05
+        5: day_05,
+        6: day_06
     }
 
     answer = day_map[args.day](args.task)
