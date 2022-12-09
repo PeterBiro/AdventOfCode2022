@@ -161,12 +161,27 @@ def day_04(task):
 
 def day_05(task):
 
-    def parse_input(data_file):
+    class Stack(object):
+        def __init__(self, reverse):
+            self.stack = []
+            self.reverse = reverse
+
+        def get_last_n(self, n):
+            last_n = self.stack[-n:]
+            if reverse:
+                last_n.reverse()
+            self.stack = self.stack[:-n]
+            return last_n
+
+        def put_on_stack(self, crates):
+            self.stack.extend(crates)
+
+    def parse_input(data_file, reverse):
         is_header = True
         moves = []
-        stacks = []
+        stacks = [None]
         header = []
-        stack_nr_pattern = r"\s+(\d+)"
+        stack_nr_pattern = r".*(\d+)$"
         move_pattern = r"move (\d+) from (\d+) to (\d+)"
         stack_nr = 0
         for line in data_file:
@@ -179,25 +194,36 @@ def day_05(task):
                     header.append(line)
             else:
                 m = re.match(move_pattern, line)
+                if not m:
+                    continue
                 moves.append({"move": int(m.group(1)),
                               "from": int(m.group(2)),
                               "to":   int(m.group(3))
                               })
         for _ in range(stack_nr):
-            stacks.append(deque([]))
+            stacks.append(Stack(reverse))
         for line in header[::-1]:
-            for i, char in enumerate(line[1::3]):
+            for i, char in enumerate(line[1::4], 1):
                 if char != " ":
-                    stacks[i].append(char)
+                    stacks[i].put_on_stack([char])
 
         return stacks, moves
 
-
-
+    def rearrange(stacks, moves):
+        for move in moves:
+            crates = stacks[move["from"]].get_last_n(move["move"])
+            stacks[move["to"]].put_on_stack(crates)
+        return stacks  # not necessary
 
     input_data = read_file("input_05.txt")
-    print(parse_input(input_data))
-    return 'IKNOW'
+    reverse = True if task == 1 else False
+    stacks, moves = parse_input(input_data, reverse)
+    rearrange(stacks, moves)
+    result = ""
+    for i in range(1, len(stacks)):
+        result += stacks[i].get_last_n(1)[0]
+
+    return result
 
 
 def main(raw_args):
